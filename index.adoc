@@ -1,0 +1,338 @@
+= Mercury
+created by Maciej Walkowiak
+:toc: right
+:source-highlighter: coderay
+
+image::https://raw.githubusercontent.com/maciejwalkowiak/contest/gh-pages/mercury.png[]
+
+____
+In Roman mythology *Mercury* is the patron god of messages and communication.
+____
+
+*Mercury* is an application initially created for http://blog.greglturnquist.com/2014/12/announcing-learningspringboot-contest-cc-packtpub-springcentral.html[_Learning Spring Boot_] contest. Source code is available at GitHub: https://github.com/maciejwalkowiak/contest/
+
+TIP: If you like the application *star* this Github repository and *tweet* about it with #mercuryapp hashtag.
+
+Mercury goal is to provide single **HTTP API** to send notifications in a company with internal applications in mind.
+
+== Why Mercury?
+
+Quite often there are many custom internal applications used in companies: HR, accounting, business trips, bug trackers and so on.
+Each one of them sends some notification to employees and developers have to solve same problems:
+
+* mail server connection configuration
+* sending emails in async manner
+* queue
+
+If mail server location or account changes it's details each application has to be reconfigured.
+
+There comes *Mercury* - one HTTP API to send messages. *Mercury* takes notification infrastructure to higher level.
+
+== Features
+
+* Sending emails - HTTP API for sending emails. Supported mailing services:
+  * *Java Mail*
+  * *https://sendgrid.com/[SendGrid]*
+* Sending messages to *https://slack.com[Slack]*
+* asynchronous message processing - all incoming requests are saved in queue and processed by consumers
+* optionally - messages are stored in *MongoDB* - you can anytime check if notification has been sent or not and what's the error message if there is any
+
+=== Health checks
+
+`GET /health` gets health information from all configured services. If all application components are running fine, metrics will reply with:
+
+[source,json]
+----
+{"status":"UP"}
+----
+
+But for example is mail server goes down or provided credentials are incorrect:
+
+[source,json]
+----
+{"status":"DOWN"}
+----
+
+==== Metrics
+
+`GET /metrics` gets metrics information with number of messages in each state.
+
+[source,json]
+----
+{
+   ...
+   "message.queued":1,
+   "message.sent":34,
+   "message.failed":2,
+   ...
+}
+----
+
+== API
+
+Exposed API is dynamic - meaning that depending on what notifications provider is configured - corresponding endpoint is available.
+For example if properties `slack.url` is not set handler for URL `http://<host>:<port>/api/slack` is not created.
+
+=== List API methods
+
+----
+GET,OPTIONS /api/
+----
+
+==== Response
+
+[source,json]
+----
+Status: 200 OK
+
+{
+  "links":[
+     {
+        "rel":"self",
+        "href":"http://localhost:8082/api"
+     },
+     {
+        "rel":"message",
+        "href":"http://localhost:8082/api/message/{id}"
+     },
+     {
+        "rel":"mail",
+        "href":"http://localhost:8082/api/mail"
+     },       {
+        "rel":"slack",
+        "href":"http://localhost:8082/api/slack"
+     }
+   ]
+}
+----
+
+=== Get message
+
+----
+GET /api/message/{id}
+----
+
+==== Response
+
+[source,json]
+----
+Status: 200 OK
+
+{
+   "id":"54b992023004a2bf10dcaf98",
+   "status":"FAILED",
+   "errorMessage":"Mailing provider is not configured",
+   "request":{
+      "to":[
+         "john.doe@mercuryapp.com"
+      ],
+      "cc":[
+
+      ],
+      "bcc":[
+
+      ],
+      "text":"Hello John",
+      "subject":"It's been a long time"
+   }
+}
+----
+
+=== Send email
+
+TIP: available only if *Java Mail* or *SendGrid* is configured
+
+----
+POST /api/mail
+----
+
+==== Request
+
+[source,json]
+----
+{
+   "to":[
+      "john.doe@mercuryapp.com"
+   ],
+   "cc":[
+         "jane.smith@mercuryapp.com",
+         "will.moore@mercuryapp.com"
+   ],
+   "bcc":[
+         "secret@mercuryapp.com"
+   ],
+   "text":"Hello John",
+   "subject":"It's been a long time"
+}
+----
+
+==== Response
+
+----
+Status: 201 CREATED
+Location: http://localhost:8082/api/message/54b992023004a2bf10dcaf98
+----
+
+=== Send Slack message
+
+TIP: available only if *Slack* is configured
+
+[source,json]
+----
+POST /api/slack
+----
+
+==== Request
+
+[source,json]
+----
+{
+   "username":"Mercury",
+   "text":"hello from slack!",
+   "icon_emoji":":chart_with_upwards_trend:",
+   "icon_url":"https://raw.githubusercontent.com/maciejwalkowiak/contest/gh-pages/mercury.png",
+   "channel":"#urgent"
+}
+----
+
+==== Response
+
+[source,json]
+----
+Status: 201 CREATED
+Location: http://localhost:8082/api/message/54b992023004a2bf10dcaf98
+----
+
+== How to run
+
+* install required software: *Java 8* and *MongoDB* (optional)
+* https://github.com/maciejwalkowiak/contest/releases/[Download latest release]
+* configure `config/application.properties`
+* run with `java -jar mercury-<version>.jar`
+* go to `http://localhost:8080/api`
+
+== Configuration options
+
+All *Mercury* configuration is stored in `config/application.properties` that you find in distribution package.
+
+=== Database configuration
+
+*Mercury* can persist messages with their statuses to MongoDB or save them into in-memory database that disappears when application goes down.
+
+For in-memory configuration make sure configuration contains following line:
+
+[source,json]
+----
+mercury.db.inMemory=true
+----
+
+For MongoDB configuration make sure that property *mercury.db.inMemory* does not exist or is set to *false* and put following configuration properties:
+
+[source,json]
+----
+spring.data.mongodb.uri=mongodb://localhost/test # connection URL
+spring.data.mongodb.database=
+spring.data.mongodb.username=
+spring.data.mongodb.password=
+----
+
+=== Services configuration
+
+In the same place you can configure configuration to services. Configuration properties presence activates related service.
+
+==== JavaMail
+
+[source,json]
+----
+spring.mail.host=
+spring.mail.port=
+spring.mail.username=
+spring.mail.password=
+----
+
+To configure additional Java Mail properties use
+`spring.mail.properties` prefix.
+
+Sample configuration for *Gmail* account:
+
+[source,json]
+-----------------------------------------------------
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=<username>
+spring.mail.password=<password>
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+-----------------------------------------------------
+
+==== SendGrid
+
+[source,json]
+----
+sendgrid.username=
+sendgrid.password=
+----
+
+*IMPORTANT:* if both *Java Mail* and *SendGrid* configuration is provided
+- all emails will be sent using *SendGrid*.
+
+==== Slack
+
+[source,json]
+----
+slack.hook.url=
+----
+
+Learn more about *Slack* WebHooks at https://api.slack.com/
+
+==== Spring Boot configuration
+
+*Mercury* is based on *Spring Boot* so you can use pretty much any of configuration property described in Boot docs: http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+
+For example in order to run *Mercury* on port *8082* add property:
+
+----
+server.port=8082
+----
+
+== Technology stack
+
+* coded in *Java 8*
+* built on the top of http://projects.spring.io/spring-boot/[Spring Boot]
+* http://projects.spring.io/spring-data-mongodb/[Spring Data MongoDB] and https://github.com/fakemongo/fongo[Fongo] for storing data
+* https://github.com/sendgrid/sendgrid-java[SendGrid-Java] for SendGrid integration
+* documentation generated with http://asciidoctor.org[Asciidoctor]
+
+++++
+   <style type="text/css">
+      .profile-circular-mask {
+        display: inline-block;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+
+      .profile-circular-mask img {
+        max-width: 100%;
+      }
+   </style>
+   <div style="text-align: center">
+      <h5>Created by</h5>
+      <div class="profile-circular-mask">
+        <img class="alignnone" src="https://avatars3.githubusercontent.com/u/1357927?v=3&s=460" alt="" />
+      </div>
+      <h5>Maciej Walkowiak</h5>
+      <a href="https://twitter.com/maciejwalkowiak" class="twitter-follow-button" data-show-count="true">Follow @maciejwalkowiak</a>
+      <script type="text/javascript">
+        window.twttr = (function (d, s, id) {
+          var t, js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src= "https://platform.twitter.com/widgets.js";
+          fjs.parentNode.insertBefore(js, fjs);
+          return window.twttr || (t = { _e: [], ready: function (f) { t._e.push(f) } });
+        }(document, "script", "twitter-wjs"));
+      </script>
+   </div>
+++++

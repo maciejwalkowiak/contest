@@ -5,7 +5,8 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.2">
-<title>Use case</title>
+<meta name="author" content="created by Maciej Walkowiak">
+<title>Mercury</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -502,10 +503,14 @@ table.CodeRay td.code>pre{padding:0}
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
+<h1>Mercury</h1>
+<div class="details">
+<span id="author" class="author">created by Maciej Walkowiak</span><br>
+</div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_use_case">1. Use case</a></li>
+<li><a href="#_why_mercury">1. Why Mercury?</a></li>
 <li><a href="#_features">2. Features</a>
 <ul class="sectlevel2">
 <li><a href="#_health_checks">2.1. Health checks</a></li>
@@ -531,6 +536,8 @@ table.CodeRay td.code>pre{padding:0}
 </div>
 </div>
 <div id="content">
+<div id="preamble">
+<div class="sectionbody">
 <div class="imageblock">
 <div class="content">
 <img src="https://raw.githubusercontent.com/maciejwalkowiak/contest/gh-pages/mercury.png" alt="mercury">
@@ -561,12 +568,11 @@ If you like the application <strong>star</strong> this Github repository and <st
 <div class="paragraph">
 <p>Mercury goal is to provide single <strong>HTTP API</strong> to send notifications in a company with internal applications in mind.</p>
 </div>
-<div class="sect1">
-<h2 id="_use_case">1. Use case</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><strong>Mercury</strong> is handy in following use case:</p>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_why_mercury">1. Why Mercury?</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Quite often there are many custom internal applications used in companies: HR, accounting, business trips, bug trackers and so on.
 Each one of them sends some notification to employees and developers have to solve same problems:</p>
@@ -586,6 +592,9 @@ Each one of them sends some notification to employees and developers have to sol
 </div>
 <div class="paragraph">
 <p>If mail server location or account changes it&#8217;s details each application has to be reconfigured.</p>
+</div>
+<div class="paragraph">
+<p>There comes <strong>Mercury</strong> - one HTTP API to send messages. <strong>Mercury</strong> takes notification infrastructure to higher level.</p>
 </div>
 </div>
 </div>
@@ -1012,7 +1021,7 @@ available only if <strong>Slack</strong> is configured
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-01-17 01:54:53 CET
+Last updated 2015-01-17 02:23:44 CET
 </div>
 </div>
 </body>
