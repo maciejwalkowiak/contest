@@ -303,6 +303,13 @@ server.port=8082
 * https://github.com/sendgrid/sendgrid-java[SendGrid-Java] for SendGrid integration
 * documentation generated with http://asciidoctor.org[Asciidoctor]
 
+=== Highlights
+
+* Application is very configurable. Thanks to http://docs.spring.io/autorepo/docs/spring-boot/current/api/org/springframework/boot/autoconfigure/condition/ConditionalOnProperty.html[@ConditionalOnProperty] depending on provided services configuration it's not only impossible
+to call particular URLs but none of service corresponding bean is created.
+* Custom health indicators: https://github.com/maciejwalkowiak/contest/blob/master/src/main/java/com/maciejwalkowiak/mercury/mail/javamail/MailServerHealthIndicator.java[MailServerHealthIndicator], https://github.com/maciejwalkowiak/contest/blob/master/src/main/java/com/maciejwalkowiak/mercury/mail/sendgrid/SendGridHealthIndicator.java[SendGridHealthIndicator]
+* Custom metrics: https://github.com/maciejwalkowiak/contest/blob/master/src/main/java/com/maciejwalkowiak/mercury/core/message/MessageMetrics.java[MessageMetrics]
+
 ++++
    <style type="text/css">
       .profile-circular-mask {

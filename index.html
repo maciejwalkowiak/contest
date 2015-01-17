@@ -531,7 +531,11 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_services_configuration">5.2. Services configuration</a></li>
 </ul>
 </li>
-<li><a href="#_technology_stack">6. Technology stack</a></li>
+<li><a href="#_technology_stack">6. Technology stack</a>
+<ul class="sectlevel2">
+<li><a href="#_highlights">6.1. Highlights</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -985,6 +989,22 @@ available only if <strong>Slack</strong> is configured
 </li>
 </ul>
 </div>
+<div class="sect2">
+<h3 id="_highlights">6.1. Highlights</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Application is very configurable. Thanks to <a href="http://docs.spring.io/autorepo/docs/spring-boot/current/api/org/springframework/boot/autoconfigure/condition/ConditionalOnProperty.html">@ConditionalOnProperty</a> depending on provided services configuration it&#8217;s not only impossible
+to call particular URLs but none of service corresponding bean is created.</p>
+</li>
+<li>
+<p>Custom health indicators: <a href="https://github.com/maciejwalkowiak/contest/blob/master/src/main/java/com/maciejwalkowiak/mercury/mail/javamail/MailServerHealthIndicator.java">MailServerHealthIndicator</a>, <a href="https://github.com/maciejwalkowiak/contest/blob/master/src/main/java/com/maciejwalkowiak/mercury/mail/sendgrid/SendGridHealthIndicator.java">SendGridHealthIndicator</a></p>
+</li>
+<li>
+<p>Custom metrics: <a href="https://github.com/maciejwalkowiak/contest/blob/master/src/main/java/com/maciejwalkowiak/mercury/core/message/MessageMetrics.java">MessageMetrics</a></p>
+</li>
+</ul>
+</div>
    <style type="text/css">
       .profile-circular-mask {
         display: inline-block;
@@ -1019,9 +1039,10 @@ available only if <strong>Slack</strong> is configured
 </div>
 </div>
 </div>
+</div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-01-17 02:23:44 CET
+Last updated 2015-01-17 03:07:24 CET
 </div>
 </div>
 </body>
